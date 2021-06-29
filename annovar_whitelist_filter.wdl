@@ -6,7 +6,6 @@ version 1.0
 ##
 ##
 ## ** ANNOVAR **
-##
 ## Annovar functionally annotates genetic variants detected from diverse genomes.
 ## Given a list of variants with chromosome, start position, end position, reference nucleotide
 ## and observed nucleotides, Annovar can perform gene-based annotation, region-based annotation,
@@ -27,7 +26,6 @@ version 1.0
 ## annovar_docker: the docker image to be used in the Annovar task
 ##
 ## ** WHITELIST_FILTER **
-##
 ## WhitelistFilter filters annovar's output based on only relevant data to our lab's whitelist.
 ##
 ## See workflow -> data -> files -> whitelist_filter_files -> whitelist_filter_rscript.R for the
@@ -38,6 +36,9 @@ version 1.0
 ##                                NOTE: This array of file paths is set on Terra - The files must be in the Workspace's bucket
 ## txt_input: the txt input file that was an output of annovar
 ## whitelist_filter_docker: the docker image to be used in the Annovar task
+##
+## ** WDL OUTPUTS **
+##  Two CSV files - one with the whitelist filter applied and one ready for manual review
 ##
 ##
 ## Distributed under terms of the MIT License
