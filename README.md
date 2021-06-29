@@ -11,6 +11,7 @@ The WhitelistFilter task uses a custom docker image with R 4.1.0 and needed pack
 # annovar_whitelist_filter.wdl
 
 ** ANNOVAR **
+
 Annovar functionally annotates genetic variants detected from diverse genomes.
 Given a list of variants with chromosome, start position, end position, reference nucleotide
 and observed nucleotides, Annovar can perform gene-based annotation, region-based annotation,
@@ -37,6 +38,7 @@ annovar_docker: the docker image to be used in the Annovar task
 
 
 ** WHITELIST_FILTER **
+
 WhitelistFilter filters annovar's output based on only relevant data to our lab's whitelist.
 
 See workflow -> data -> files -> whitelist_filter_files -> whitelist_filter_rscript.R for the R script code with comments.
