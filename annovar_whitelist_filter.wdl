@@ -1,6 +1,6 @@
 version 1.0
 
-## Version 06-29-2021
+## Version 06-30-2021
 ##
 ## This WDL workflow runs Annovar and a Whitelist Filter on the ouput VCFs from the Mutect2 Workflow.
 ##
@@ -14,8 +14,8 @@ version 1.0
 ## See ANNOVAR documentation to fully understand functionality:
 ## https://annovar.openbioinformatics.org/en/latest/user-guide/startup/
 ##
-## annovar_data_sources: the list of needed files for annovar to run
-##                       NOTE: This array of file paths is set on Terra - The files must be in the Workspace's bucket
+## annovar_zip: the zipped folder with all of the needed files to run Annovar
+##              NOTE: This file path is set on Terra - The file must be in the Workspace's bucket
 ## annovar_vcf_input: the Tables/sample column containing the vcf output files from a run of Mutect2
 ##                    NOTE: This is set on Terra (ex. this.filtered_vcf)
 ## annovar_protocols: the specificed protocols needed to run annovar (default = refGene,cosmic70)
@@ -28,12 +28,11 @@ version 1.0
 ## ** WHITELIST_FILTER **
 ## WhitelistFilter filters annovar's output based on only relevant data to our lab's whitelist.
 ##
-## See workflow -> data -> files -> whitelist_filter_files -> whitelist_filter_rscript.R for the
-## R script code with comments.
+## You can find the R script code with comments on github: https://github.com/charliecondon/Annovar_Whitelist_Filter_WDL
 ##
 ## sample_id: set to the corresponding sample id for a given run
-## whitelist_filter_needed_files: the files, including the .R Script file, needed to run the WhitelistFilter
-##                                NOTE: This array of file paths is set on Terra - The files must be in the Workspace's bucket
+## whitelist_filter_zip: the zipped folder with all of the needed files, including the .R Script file, needed to run WhitelistFilter
+##                       NOTE: This file path is set on Terra - The file must be in the Workspace's bucket
 ## txt_input: the txt input file that was an output of annovar
 ## whitelist_filter_docker: the docker image to be used in the Annovar task
 ##
@@ -87,7 +86,7 @@ task Annovar {
       String annovar_docker
 
       File vcf_input
-      Array[File] annovar_data_sources
+      File annovar_zip
 
       String ref_name = "hg38"
       String annovar_protocols = "refGene,cosmic70"
@@ -96,19 +95,18 @@ task Annovar {
 
     command {
       set -euo pipefail
-      mkdir annovar
-      for files in ~{sep=' ' annovar_data_sources}; do \
-            cp $files annovar; \
-        done;
 
-      chmod +x annovar/convert2annovar.pl
-      chmod +x annovar/table_annovar.pl
-      chmod +x annovar/annotate_variation.pl
-      chmod +x annovar/coding_change.pl
-      chmod +x annovar/retrieve_seq_from_fasta.pl
-      chmod +x annovar/variants_reduction.pl
+      cp ~{annovar_zip} .
+      unzip annovar_files.zip
 
-      perl annovar/table_annovar.pl ${vcf_input} annovar \
+      chmod +x annovar_files/convert2annovar.pl
+      chmod +x annovar_files/table_annovar.pl
+      chmod +x annovar_files/annotate_variation.pl
+      chmod +x annovar_files/coding_change.pl
+      chmod +x annovar_files/retrieve_seq_from_fasta.pl
+      chmod +x annovar_files/variants_reduction.pl
+
+      perl annovar_files/table_annovar.pl ${vcf_input} annovar_files \
         -buildver ${default="hg38" ref_name} \
         -out "annovar_out" \
         -remove \
@@ -143,18 +141,22 @@ task WhitelistFilter {
 
       File txt_input
       String sample_id
-      Array[File] whitelist_filter_needed_files
+      File whitelist_filter_zip
     }
 
     command {
       set -euo pipefail
-      for files in ~{sep=' ' whitelist_filter_needed_files}; do \
-            cp $files .; \
-        done;
 
+      cp ~{whitelist_filter_zip} .
+      unzip whitelist_filter_files.zip
+      cd whitelist_filter_files
+      
       cp ~{txt_input} .
 
       Rscript whitelist_filter_rscript.R --args ~{sample_id}
+      
+      mv "~{sample_id}.annovar.varsOI.wl.csv" ..
+      mv "~{sample_id}.annovar.varsOI.manualreview.csv" ..
     }
 
     runtime {
