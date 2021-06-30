@@ -19,8 +19,8 @@ filter-based annotation, and more.
 
 See ANNOVAR documentation to fully understand functionality: https://annovar.openbioinformatics.org/en/latest/user-guide/startup/
 
-annovar_data_sources: the list of needed files for annovar to run
-  - NOTE: This array of file paths is set on Terra - The files must be in the Workspace's bucket
+annovar_zip: the zipped folder with all of the needed files to run Annovar
+  - NOTE: This file path is set on Terra - The file must be in the Workspace's bucket
 
 annovar_vcf_input: the Tables/sample column containing the vcf output files from a run of Mutect2
   - NOTE: This is set on Terra (ex. this.filtered_vcf)
@@ -41,12 +41,12 @@ annovar_docker: the docker image to be used in the Annovar task
 
 WhitelistFilter filters annovar's output based on only relevant data to our lab's whitelist.
 
-See workflow -> data -> files -> whitelist_filter_files -> whitelist_filter_rscript.R for the R script code with comments.
+You can find the R script code with comments on github: https://github.com/charliecondon/Annovar_Whitelist_Filter_WDL
 
 sample_id: set to the corresponding sample id for a given run
 
-whitelist_filter_needed_files: the files, including the .R Script file, needed to run the WhitelistFilter
-  - NOTE: This array of file paths is set on Terra - The files must be in the Workspace's bucket
+whitelist_filter_zip: the zipped folder with all of the needed files, including the .R Script file, needed to run WhitelistFilter
+  - NOTE: This file path is set on Terra - The file must be in the Workspace's bucket
 
 txt_input: the txt input file that was an output of annovar
 
