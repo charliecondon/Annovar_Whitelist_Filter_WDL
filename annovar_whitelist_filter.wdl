@@ -31,6 +31,7 @@ version 1.0
 ## You can find the R script code with comments on github: https://github.com/charliecondon/Annovar_Whitelist_Filter_WDL
 ##
 ## sample_id: set to the corresponding sample id for a given run
+##			  NOTE: This is set on Terra (ex. this.sample_id)
 ## whitelist_filter_zip: the zipped folder with all of the needed files, including the .R Script file, needed to run WhitelistFilter
 ##                       NOTE: This file path is set on Terra - The file must be in the Workspace's bucket
 ## txt_input: the txt input file that was an output of annovar
@@ -47,7 +48,7 @@ version 1.0
 workflow AnnovarAndWhitelistFilter {
     input {
       File annovar_vcf_input
-      String sample_id = basename("~{annovar_vcf_input}", ".hg38-filtered.vcf")
+      String sample_id
 
       String annovar_docker = "perl:5.34.0"
       String whitelist_filter_docker = "ccondon/whitelist_filter:latest"
