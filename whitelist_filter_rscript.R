@@ -244,7 +244,13 @@ varsOI.func2$aalast10pctPeptide=varsOI.func2$aalen *0.9
 varsOI.func2$LOFfirst10pct=varsOI.func2$wl.lof&   (as.numeric(varsOI.func2$aapos )<varsOI.func2$aafirst10pctPeptide)
 varsOI.func2$LOFlast10pct=varsOI.func2$wl.lof&   (as.numeric(varsOI.func2$aapos ) > varsOI.func2$aalast10pctPeptide)
 
+check_vars <- data.frame(Sample=sample_id,
+                         total_num_variants=length(varsOI.func2$Sample),
+                         total_num_whitelist=length(varsOI.func2[whitelist==T,]$Sample),
+                         total_num_manualreview=length(varsOI.func2[manualreview==T,]$Sample))
 
 #write out files
+write.csv(check_vars,paste(sample_id, ".annovar.varsOI.check.csv", sep=""))
+write.csv(varsOI.func2,paste(sample_id, ".annovar.varsOI.allvariants.csv", sep=""))
 write.csv(varsOI.func2[whitelist==T,],paste(sample_id, ".annovar.varsOI.wl.csv", sep=""))
 write.csv(varsOI.func[manualreview==T,],paste(sample_id, ".annovar.varsOI.manualreview.csv", sep=""))
