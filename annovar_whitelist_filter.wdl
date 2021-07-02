@@ -1,6 +1,6 @@
 version 1.0
 
-## Version 06-30-2021
+## Version 07-2-2021
 ##
 ## This WDL workflow runs Annovar and a Whitelist Filter on the ouput VCFs from the Mutect2 Workflow.
 ##
@@ -38,7 +38,11 @@ version 1.0
 ## whitelist_filter_docker: the docker image to be used in the Annovar task
 ##
 ## ** WDL OUTPUTS **
-##  Two CSV files - one with the whitelist filter applied and one ready for manual review
+##  Four CSV files: 
+## 		- one with the whitelist filter applied 
+##		- one ready for manual review
+##		- one with check information for debugging 
+##		- one with all the pre-whitelist variants listed
 ##
 ##
 ## Distributed under terms of the MIT License
@@ -74,6 +78,8 @@ workflow AnnovarAndWhitelistFilter {
 
       File whitelist_filter_output_wl = WhitelistFilter.whitelist_filter_output_wl_csv
       File whitelist_filter_output_manual_review = WhitelistFilter.whitelist_filter_output_manual_review_csv
+      File whitelist_filter_output_check = WhitelistFilter.whitelist_filter_output_check_csv
+      File whitelist_filter_output_allvariants = WhitelistFilter.whitelist_filter_output_allvariants_csv
     }
 }
 
@@ -147,17 +153,14 @@ task WhitelistFilter {
 
     command {
       set -euo pipefail
-
+      
       cp ~{whitelist_filter_zip} .
       unzip whitelist_filter_files.zip
-      cd whitelist_filter_files
+      mv whitelist_filter_files/* .
       
       cp ~{txt_input} .
 
       Rscript whitelist_filter_rscript.R --args ~{sample_id}
-      
-      mv "~{sample_id}.annovar.varsOI.wl.csv" ..
-      mv "~{sample_id}.annovar.varsOI.manualreview.csv" ..
     }
 
     runtime {
@@ -170,6 +173,8 @@ task WhitelistFilter {
     }
 
     output {
+      File whitelist_filter_output_check_csv = sample_id + ".annovar.varsOI.check.csv"
+      File whitelist_filter_output_allvariants_csv = sample_id + ".annovar.varsOI.allvariants.csv"
       File whitelist_filter_output_wl_csv = sample_id + ".annovar.varsOI.wl.csv"
       File whitelist_filter_output_manual_review_csv = sample_id + ".annovar.varsOI.manualreview.csv"
     }
