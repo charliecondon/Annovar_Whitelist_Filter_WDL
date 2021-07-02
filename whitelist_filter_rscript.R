@@ -250,7 +250,7 @@ check_vars <- data.frame(Sample=sample_id,
                          total_num_manualreview=length(varsOI.func2[manualreview==T,]$Sample))
 
 #write out files
-write.csv(check_vars,paste(sample_id, ".annovar.varsOI.check.csv", sep=""))
-write.csv(varsOI.func2,paste(sample_id, ".annovar.varsOI.allvariants.csv", sep=""))
-write.csv(varsOI.func2[whitelist==T,],paste(sample_id, ".annovar.varsOI.wl.csv", sep=""))
-write.csv(varsOI.func[manualreview==T,],paste(sample_id, ".annovar.varsOI.manualreview.csv", sep=""))
+write.csv(check_vars,paste(sample_id, ".annovar.varsOI.varcount.csv", sep=""), row.names=FALSE)
+write.csv(varsOI.func2,paste(sample_id, ".annovar.varsOI.allvariants.csv", sep=""), row.names=FALSE)
+write.csv(varsOI.func2[whitelist==T,],paste(sample_id, ".annovar.varsOI.wl.csv", sep=""), row.names=FALSE)
+write.csv(varsOI.func[manualreview==T,],paste(sample_id, ".annovar.varsOI.manualreview.csv", sep=""), row.names=FALSE)
