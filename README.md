@@ -59,5 +59,5 @@ whitelist_filter_docker: the docker image to be used in the Annovar task
 Four CSV files: 
   - one with the whitelist filter applied 
   - one ready for manual review
-	- one with check information for debugging 
-	- one with all the pre-whitelist variants listed
+  - one with check information for debugging 
+  - one with all the pre-whitelist variants listed
