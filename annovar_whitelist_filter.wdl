@@ -41,7 +41,7 @@ version 1.0
 ##  Four CSV files: 
 ## 		- one with the whitelist filter applied 
 ##		- one ready for manual review
-##		- one with check information for debugging 
+##		- one with variant count information for debugging 
 ##		- one with all the pre-whitelist variants listed
 ##
 ##
@@ -78,7 +78,7 @@ workflow AnnovarAndWhitelistFilter {
 
       File whitelist_filter_output_wl = WhitelistFilter.whitelist_filter_output_wl_csv
       File whitelist_filter_output_manual_review = WhitelistFilter.whitelist_filter_output_manual_review_csv
-      File whitelist_filter_output_check = WhitelistFilter.whitelist_filter_output_check_csv
+      File whitelist_filter_output_varcount = WhitelistFilter.whitelist_filter_output_varcount_csv
       File whitelist_filter_output_allvariants = WhitelistFilter.whitelist_filter_output_allvariants_csv
     }
 }
@@ -173,7 +173,7 @@ task WhitelistFilter {
     }
 
     output {
-      File whitelist_filter_output_check_csv = sample_id + ".annovar.varsOI.check.csv"
+      File whitelist_filter_output_varcount_csv = sample_id + ".annovar.varsOI.varcount.csv"
       File whitelist_filter_output_allvariants_csv = sample_id + ".annovar.varsOI.allvariants.csv"
       File whitelist_filter_output_wl_csv = sample_id + ".annovar.varsOI.wl.csv"
       File whitelist_filter_output_manual_review_csv = sample_id + ".annovar.varsOI.manualreview.csv"
