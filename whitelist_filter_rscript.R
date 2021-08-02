@@ -6,7 +6,7 @@ whitelist.LoF<-fread("CHIP_nonsense_FS_vars_agb_01262020.txt")
 
 args <- commandArgs(trailingOnly=TRUE)
 sample_id<-args[2]
-vars1<-fread("annovar_out.hg38_multianno.txt")
+vars1<-fread(paste(sample_id, ".annovar_out.hg38_multianno.txt", sep = ""))
 vars<-transform(vars1, Sample=sample_id)
 
 colnames=c("Chr","Start","End","Ref","Alt","Func.refGene","Gene.refGene","GeneDetail.refGene","ExonicFunc.refGene","AAChange.refGene")
@@ -20,6 +20,7 @@ varsOI.func<-varsOI[Gene.refGene%in%gList$Gene&
                       (grepl("exonic",varsOI$Func.refGene,fixed=T)|
                          grepl("splicing",varsOI$Func.refGene,fixed=T)),]
 varsOI.func<-merge(varsOI.func,gList[,c("Gene", "Accession")],by.x="Gene.refGene", by.y="Gene")
+
 
 #Func.refGene # (exonic, splicing or some wierd merged combination)
 #GeneDetail.refGene # NM_017940:exon16:c.1380-2A>G
@@ -120,6 +121,7 @@ varsOI.func[asxl2ExceptionSplice,"whitelist"]=T
 varsOI.func[asxl2ExceptionSplice,"wl.splice"]=T
 varsOI.func[asxl2ExceptionSplice,"wl.exception"]=T
 
+
 #PPM1D	Frameshift/nonsense in exon 5 or 6
 vlof<-grepl("X",varsOI.func$NonsynOI, fixed=T) #stop gain or stop loss
 vFS<-grepl("fs",varsOI.func$NonsynOI, fixed=T) #frameshift
@@ -157,6 +159,7 @@ for(i in CBLidx){
     varsOI.func[i,"wl.exception"]=T
   }
 }
+
 #CBLB	RING finger missense p.372-412
 CBLBidx<-which(varsOI.func$Gene.refGene=="CBLB"&
                  varsOI.func$ExonicFunc.refGene=="nonsynonymous SNV"&
@@ -214,43 +217,24 @@ varsOI.func[(varsOI.func$ExonicFunc.refGene=="frameshift deletion"|
                varsOI.func$ExonicFunc.refGene=="frameshift insertion")
             &(varsOI.func$Gene.refGene=="NPM1"),"manualreview"]=T
 
+# Removed length of protein code 
 
-#########
-#New code May 11 2020
-#Add LoF filtering
-#Function to extract number
-library(stringr)
-numextract <- function(string){
-  str_extract(string, "\\-*\\d+\\.*\\d*")
+# Columns to be removed if they exist
+if ("aalen" %in% colnames(varsOI.func)) {
+   varsOI.func <- varsOI.func[,-c("aalen", "aapos", "aafirst10pctPeptide", "aalast10pctPeptide", "LOFfirst10pct", "LOFlast10pct")]
 }
 
-#Function to extract amino acid length of protein
-library("biomaRt")
-mart<- useDataset("hsapiens_gene_ensembl", useMart("ensembl"))
-protein = getSequence(id=gList$Accession,
-                      type="refseq_mrna",
-                      seqType="peptide",
-                      mart=mart)
-protein=transform(protein, aalen=nchar(protein$peptide))
-varsOI.func2<-merge(varsOI.func,protein[!duplicated(protein$refseq_mrna),-1],
-                    by.x="Accession",by.y="refseq_mrna",all.x=T)
+#"aalen", "aapos", "aafirst10pctPeptide", "aalast10pctPeptide", "LOFfirst10pct", "LOFlast10pct"
 
-varsOI.func2$aapos=-9
-varsOI.func2$aapos=numextract(varsOI.func2$NonsynOI)
-varsOI.func2$aafirst10pctPeptide=varsOI.func2$aalen *0.1
-varsOI.func2$aalast10pctPeptide=varsOI.func2$aalen *0.9
 
-#Flag first and last 10% of protein
-varsOI.func2$LOFfirst10pct=varsOI.func2$wl.lof&   (as.numeric(varsOI.func2$aapos )<varsOI.func2$aafirst10pctPeptide)
-varsOI.func2$LOFlast10pct=varsOI.func2$wl.lof&   (as.numeric(varsOI.func2$aapos ) > varsOI.func2$aalast10pctPeptide)
 
 check_vars <- data.frame(Sample=sample_id,
-                         total_num_variants=length(varsOI.func2$Sample),
-                         total_num_whitelist=length(varsOI.func2[whitelist==T,]$Sample),
-                         total_num_manualreview=length(varsOI.func2[manualreview==T,]$Sample))
+                         total_num_variants=length(varsOI.func$Sample),
+                         total_num_whitelist=length(varsOI.func[whitelist==T,]$Sample),
+                         total_num_manualreview=length(varsOI.func[manualreview==T,]$Sample))
 
 #write out files
 write.csv(check_vars,paste(sample_id, ".annovar.varsOI.varcount.csv", sep=""), row.names=FALSE)
-write.csv(varsOI.func2,paste(sample_id, ".annovar.varsOI.allvariants.csv", sep=""), row.names=FALSE)
-write.csv(varsOI.func2[whitelist==T,],paste(sample_id, ".annovar.varsOI.wl.csv", sep=""), row.names=FALSE)
+write.csv(varsOI.func,paste(sample_id, ".annovar.varsOI.allvariants.csv", sep=""), row.names=FALSE)
+write.csv(varsOI.func[whitelist==T,],paste(sample_id, ".annovar.varsOI.wl.csv", sep=""), row.names=FALSE)
 write.csv(varsOI.func[manualreview==T,],paste(sample_id, ".annovar.varsOI.manualreview.csv", sep=""), row.names=FALSE)
