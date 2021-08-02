@@ -1,0 +1,34 @@
+Gene	AAChange
+#LOF
+ASXL1	Frameshift/nonsense/splice-site in exon 11-12
+ASXL2	Frameshift/nonsense/splice-site in exon 11-12
+GATA3	Frameshift/nonsense/splice-site ZNF domain
+PPM1D	Frameshift/nonsense in exon 5 or 6
+#Missense/indel
+CBL	RING finger missense p.381-421
+CBLB	RING finger missense p.372-412
+CREBBP	S1680del
+CSF3R	truncating c.741-791
+DNMT3A	F732del
+DNMT3A	F752del
+EP300	VF1148_1149del
+FLT3	FY590-591GD
+FLT3	del835
+JAK2	del/ins537-539L
+JAK2	del/ins538-539L
+JAK2	del/ins540-543MK
+JAK2	del/ins540-544MK
+JAK2	del/ins541-543K
+JAK2	del542-543
+JAK2	del543-544
+JAK2	ins11546-547
+KDM6A	del419
+KIT	ins503
+KIT	del560
+KIT	del579
+KIT	del551-559
+MPL	del513
+MPL	W515-518KT
+NPM1	Frameshift p.W288fs (insertion at c.859_860, 860_861, 862_863, 863_864)
+TET2	missense mutations in catalytic domains (p.1104-1481 and 1843-2002)
+SRSF2	P95fs
