@@ -1,6 +1,6 @@
 version 1.0
 
-## Version 07-2-2021
+## Version 8-2-2021
 ##
 ## This WDL workflow runs Annovar and a Whitelist Filter on the ouput VCFs from the Mutect2 Workflow.
 ##
@@ -30,18 +30,19 @@ version 1.0
 ##
 ## You can find the R script code with comments on github: https://github.com/charliecondon/Annovar_Whitelist_Filter_WDL
 ##
+## run_whitelist: if true, the WhitelistFilter task is run
 ## sample_id: set to the corresponding sample id for a given run
 ##			  NOTE: This is set on Terra (ex. this.sample_id)
-## whitelist_filter_zip: the zipped folder with all of the needed files, including the .R Script file, needed to run WhitelistFilter
+## whitelist_filter_zip: the zipped folder with all of the files needed to run WhitelistFilter
 ##                       NOTE: This file path is set on Terra - The file must be in the Workspace's bucket
 ## txt_input: the txt input file that was an output of annovar
 ## whitelist_filter_docker: the docker image to be used in the Annovar task
 ##
 ## ** WDL OUTPUTS **
-##  Four CSV files: 
-## 		- one with the whitelist filter applied 
+##  Four CSV files:
+## 		- one with the whitelist filter applied
 ##		- one ready for manual review
-##		- one with variant count information for debugging 
+##		- one with variant count information for debugging
 ##		- one with all the pre-whitelist variants listed
 ##
 ##
@@ -60,7 +61,7 @@ workflow AnnovarAndWhitelistFilter {
     }
 
     Boolean run_whitelist_or_default = select_first([run_whitelist, true])
-    
+
     call Annovar {
       input:
         annovar_docker = annovar_docker,
@@ -161,10 +162,12 @@ task WhitelistFilter {
 
     command {
       set -euo pipefail
-      
+
       unzip ~{whitelist_filter_zip}
       mv whitelist_filter_files/* .
-      
+
+      wget https://raw.githubusercontent.com/charliecondon/Annovar_Whitelist_Filter_WDL/main/whitelist_filter_rscript.R
+
       cp ~{txt_input} .
 
       Rscript whitelist_filter_rscript.R --args ~{sample_id}
