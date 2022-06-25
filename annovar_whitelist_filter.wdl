@@ -70,7 +70,7 @@ workflow AnnovarAndWhitelistFilter {
     }
 
     if (run_whitelist_or_default) {
-      File whitelist_filter_annovar_txt_input = annovar_annotated_file_table
+      File whitelist_filter_annovar_txt_input = Annovar.annovar_annotated_file_table
       call WhitelistFilter {
         input:
           whitelist_filter_docker = whitelist_filter_docker,
