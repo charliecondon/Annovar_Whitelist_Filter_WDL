@@ -166,7 +166,7 @@ task WhitelistFilter {
       unzip ~{whitelist_filter_zip}
       mv whitelist_filter_files/* .
 
-      wget https://raw.githubusercontent.com/charliecondon/Annovar_Whitelist_Filter_WDL/main/whitelist_filter_rscript.R
+      wget -O whitelist_filter_rscript.R https://raw.githubusercontent.com/charliecondon/Annovar_Whitelist_Filter_WDL/main/whitelist_filter_rscript.R
 
       cp ~{txt_input} .
 
