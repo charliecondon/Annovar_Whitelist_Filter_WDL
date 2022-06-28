@@ -5,7 +5,7 @@ whitelist.splice<-fread("CHIP_splice_vars_agb_01262020.txt")
 whitelist.LoF<-fread("CHIP_nonsense_FS_vars_agb_01262020.txt")
 
 args <- commandArgs(trailingOnly=TRUE)
-sample_id<-args[2]
+sample_id<-args[1]
 vars1<-fread(paste(sample_id, ".annovar_out.hg38_multianno.txt", sep = ""))
 vars<-transform(vars1, Sample=sample_id)
 
