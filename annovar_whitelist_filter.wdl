@@ -170,7 +170,7 @@ task WhitelistFilter {
 
       cp ~{txt_input} .
 
-      Rscript whitelist_filter_rscript.R --args ~{sample_id}
+      Rscript --vanilla whitelist_filter_rscript.R ~{sample_id}
     }
 
     runtime {
